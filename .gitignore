@@ -1,0 +1,54 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+*.jks
+*.keystore
+
+# iOS / macOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Other
+**/linux/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugins.cmake
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Log
+*.log
+*.tmp
+*.swp
+*~
+
+# Audio
+assets/*.wav
+assets/*.mp3
+assets/*.m4a
+assets/*.ogg
+
+# Other2
+*.apk
+*.aab
+.env
+secrets/
