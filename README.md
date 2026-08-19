@@ -17,9 +17,8 @@ Echo Show 5（Android 11改造）向けのシンプルな2×2ダッシュボー�
 
 ## アラームを変更したい場合
 
-`assets` に `wakeuptime.wav` を入れてください。
-その上で`main.dart` の `wakeuptime.wav` を変更してください。
+1. `assets` に `wakeuptime.wav` を入れてください。
+2. その上で`main.dart` の `wakeuptime.wav` を変更してください。
 
 ## 注意
-- デフォルトで動画はミュートになっています
 - 天気は30分ごとに自動更新します
