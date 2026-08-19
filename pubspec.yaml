@@ -1,7 +1,7 @@
-name: PreWatch
+name: prewatch
 description: Simple 2x2 dashboard for Echo Show 5
 publish_to: 'none'
-version: 1.0.0+1
+version: 2.0.0+1
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -25,11 +25,12 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/wakeuptime.wav
+    - assets/miracle.wav
+    - assets/ecl.wav
 
 flutter_launcher_icons:
   android: true
-  ios: false
-  image_path: "assets/icon.png"   # 添付画像をこの名前で保存
+  ios: true
+  image_path: "assets/icon.png"
   adaptive_icon_background: "#FFB6C1"
   adaptive_icon_foreground: "assets/icon.png"

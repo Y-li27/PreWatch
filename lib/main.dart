@@ -80,7 +80,7 @@ class _DashboardPageState extends State<DashboardPage> {
   // アラーム
   TimeOfDay? _alarmTime;
   bool _alarmTriggered = false;
-  bool _useCustomSound = true;
+  String _selectedSound = 'system'; // 新しい変数
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
@@ -111,10 +111,16 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<void> _triggerAlarm() async {
     try {
-      if (_useCustomSound) {
-        await _audioPlayer.play(AssetSource('wakeuptime.wav'));
-      } else {
-        SystemSound.play(SystemSoundType.alert);
+      switch (_selectedSound) {
+        case 'system':
+          SystemSound.play(SystemSoundType.alert);
+          break;
+        case 'miracle':
+          await _audioPlayer.play(AssetSource('miracle.wav'));
+          break;
+        case 'eclaire':
+          await _audioPlayer.play(AssetSource('ecl.wav'));
+          break;
       }
     } catch (_) {
       SystemSound.play(SystemSoundType.alert);
@@ -132,6 +138,7 @@ class _DashboardPageState extends State<DashboardPage> {
           TextButton(
             onPressed: () async {
               await _audioPlayer.stop();
+              // ignore: use_build_context_synchronously
               Navigator.pop(context);
               setState(() {
                 _alarmTriggered = false;
@@ -236,6 +243,7 @@ class _DashboardPageState extends State<DashboardPage> {
           _currentIndex = (_currentIndex + 1) % _images.length;
         });
       });
+    // ignore: empty_catches
     } catch (e) {}
   }
 
@@ -272,18 +280,23 @@ class _DashboardPageState extends State<DashboardPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'プリキュアモード',
+                          'サウンド',
                           style: TextStyle(color: Colors.black87, fontSize: 14),
                         ),
-                        Switch(
-                          value: _useCustomSound,
-                          activeColor: Colors.white,
-                          onChanged: (v) {
+                        const SizedBox(width: 8),
+                        DropdownButton<String>(
+                          value: _selectedSound,
+                          onChanged: (value) {
                             setState(() {
-                              _useCustomSound = v;
+                              _selectedSound = value!;
                             });
                             setDialogState(() {});
                           },
+                          items: const [
+                            DropdownMenuItem(value: 'system', child: Text('システム')),
+                            DropdownMenuItem(value: 'miracle', child: Text('アンサー/ミスティック')),
+                            DropdownMenuItem(value: 'eclaire', child: Text('エクレール')),
+                          ],
                         ),
                       ],
                     ),
@@ -389,7 +402,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final timeStr = DateFormat('HH:mm:ss').format(_now);
-    final dateStr = DateFormat('M月d日', 'ja_JP').format(_now);
+    final dateStr = DateFormat('yyyy年M月d日', 'ja_JP').format(_now);
     final weekdayStr = DateFormat('EEEE', 'ja_JP').format(_now);
 
     const mainTextStyle = TextStyle(
@@ -598,7 +611,7 @@ class _DashboardPageState extends State<DashboardPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
