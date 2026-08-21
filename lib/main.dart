@@ -118,7 +118,7 @@ class _DashboardPageState extends State<DashboardPage> {
         case 'miracle':
           await _audioPlayer.play(AssetSource('miracle.wav'));
           break;
-        case 'eclaire':
+        case 'eclair':
           await _audioPlayer.play(AssetSource('ecl.wav'));
           break;
       }
@@ -295,7 +295,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           items: const [
                             DropdownMenuItem(value: 'system', child: Text('システム')),
                             DropdownMenuItem(value: 'miracle', child: Text('アンサー/ミスティック')),
-                            DropdownMenuItem(value: 'eclaire', child: Text('エクレール')),
+                            DropdownMenuItem(value: 'eclair', child: Text('エクレール')),
                           ],
                         ),
                       ],
