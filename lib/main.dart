@@ -121,6 +121,9 @@ class _DashboardPageState extends State<DashboardPage> {
         case 'eclair':
           await _audioPlayer.play(AssetSource('ecl.wav'));
           break;
+        case 'alcana':
+          await _audioPlayer.play(AssetSource('alcana.wav'));
+          break; 
       }
     } catch (_) {
       SystemSound.play(SystemSoundType.alert);
@@ -296,6 +299,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             DropdownMenuItem(value: 'system', child: Text('システム')),
                             DropdownMenuItem(value: 'miracle', child: Text('アンサー/ミスティック')),
                             DropdownMenuItem(value: 'eclair', child: Text('エクレール')),
+                            DropdownMenuItem(value: 'alcana', child: Text('アルカナ')),
                           ],
                         ),
                       ],

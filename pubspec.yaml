@@ -27,6 +27,7 @@ flutter:
   assets:
     - assets/miracle.wav
     - assets/ecl.wav
+    - assets/alcana.wav
 
 flutter_launcher_icons:
   android: true
