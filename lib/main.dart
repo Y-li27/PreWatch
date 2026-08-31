@@ -354,6 +354,7 @@ class _DashboardPageState extends State<DashboardPage> {
   void _openRegionSettings() {
     final regions = [
       {'name': '東京', 'lat': 35.6895, 'lon': 139.6917},
+      {'name': 'まことみらい', 'lat': 35.4437, 'lon': 139.6380},
       {'name': '大阪', 'lat': 34.6937, 'lon': 135.5023},
       {'name': '名古屋', 'lat': 35.1815, 'lon': 136.9066},
       {'name': '福岡', 'lat': 33.5904, 'lon': 130.4017},
