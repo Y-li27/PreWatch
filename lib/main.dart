@@ -113,6 +113,7 @@ class _DashboardPageState extends State<DashboardPage> {
     try {
       switch (_selectedSound) {
         case 'system':
+          // システムサウンドだけは特別な文字を表示しない
           SystemSound.play(SystemSoundType.alert);
           break;
         case 'miracle':
@@ -136,7 +137,9 @@ class _DashboardPageState extends State<DashboardPage> {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFFC9A0FF),
         title: const Text('アラーム', style: TextStyle(color: Colors.black87, fontSize: 20)),
-        content: const Text('プリキュア！ウェイクアップタイム！', style: TextStyle(color: Colors.black87, fontSize: 20)),
+        content: _selectedSound == 'system'
+            ? const Text('時間です', style: TextStyle(color: Colors.black87, fontSize: 20))
+            : const Text('プリキュア！ウェイクアップタイム！', style: TextStyle(color: Colors.black87, fontSize: 20)),
         actions: [
           TextButton(
             onPressed: () async {
@@ -560,7 +563,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         onTap: _pickImages,
                         onLongPress: _clearImages,
                         child: _buildPanel(
-                          color: const Color(0xFFB0B0B0),
+                          color: const Color.fromARGB(255, 253, 238, 142),
                           child: _images.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
