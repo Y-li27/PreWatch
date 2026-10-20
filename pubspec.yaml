@@ -1,7 +1,7 @@
 name: prewatch
 description: Simple 2x2 dashboard for Echo Show 5
 publish_to: 'none'
-version: 3.0.1+1
+version: 3.1.0+1
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -26,8 +26,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/miracle.wav
-    - assets/ecl.wav
+    - assets/eclair.wav
     - assets/alcana.wav
+    - assets/all.wav
 
 flutter_launcher_icons:
   android: true

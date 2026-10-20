@@ -120,11 +120,13 @@ class _DashboardPageState extends State<DashboardPage> {
           await _audioPlayer.play(AssetSource('miracle.wav'));
           break;
         case 'eclair':
-          await _audioPlayer.play(AssetSource('ecl.wav'));
+          await _audioPlayer.play(AssetSource('eclair.wav'));
           break;
         case 'alcana':
           await _audioPlayer.play(AssetSource('alcana.wav'));
           break; 
+        case 'all':
+          await _audioPlayer.play(AssetSource('all.wav'));
       }
     } catch (_) {
       SystemSound.play(SystemSoundType.alert);
@@ -303,6 +305,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             DropdownMenuItem(value: 'miracle', child: Text('アンサー/ミスティック')),
                             DropdownMenuItem(value: 'eclair', child: Text('エクレール')),
                             DropdownMenuItem(value: 'alcana', child: Text('アルカナ')),
+                            DropdownMenuItem(value: 'all', child: Text('全員')),
                           ],
                         ),
                       ],
