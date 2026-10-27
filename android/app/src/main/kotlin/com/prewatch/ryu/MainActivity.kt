@@ -1,4 +1,4 @@
-package com.example.echo_clock_app
+package com.prewatch.ryu
 
 import android.os.Bundle
 import android.view.WindowManager

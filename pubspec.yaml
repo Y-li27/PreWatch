@@ -1,7 +1,7 @@
 name: prewatch
 description: Simple 2x2 dashboard for Echo Show 5
 publish_to: 'none'
-version: 4.2.3+17
+version: 4.2.6+20
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -31,6 +31,7 @@ flutter:
     - assets/wakeup_eclair.wav
     - assets/wakeup_alcana.wav
     - assets/wakeup_all.wav
+    - assets/system_chime.wav
     - assets/curette_answer.wav
     - assets/curette_mystic.wav
     - assets/curette_miracle.wav

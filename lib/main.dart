@@ -85,7 +85,7 @@ class _DashboardPageState extends State<DashboardPage> {
   int _pomoTotalSeconds = 25 * 60;
   int _pomoRemainingSeconds = 25 * 60;
   int _pomoCompletedFocus = 0;
-  String _pomoSound = 'all'; // ポモドーロ終了音（curette_*.wav から選ぶ）
+  String _pomoSound = 'all'; // ポモドーロ終了音（curette_*.wav、「システム」はピンポーン）
 
   bool get _pomoIsLongBreak =>
       _pomoIsBreak &&
@@ -387,36 +387,68 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  // アラームのサウンド再生（旧ファイルのウェイクアップタイム用）
-  Future<void> _playSelectedSound() async {
-    try {
-      switch (_selectedSound) {
-        case 'system':
-          SystemSound.play(SystemSoundType.alert);
-          break;
-        case 'miracle':
-          await _audioPlayer.play(AssetSource('wakeup_miracle.wav'));
-          break;
-        case 'eclair':
-          await _audioPlayer.play(AssetSource('wakeup_eclair.wav'));
-          break;
-        case 'alcana':
-          await _audioPlayer.play(AssetSource('wakeup_alcana.wav'));
-          break;
-        case 'all':
-          await _audioPlayer.play(AssetSource('wakeup_all.wav'));
-      }
-    } catch (_) {
+  // 再生に失敗したら理由を画面に出す（「試す」ボタン用）。
+  // 無反応で握りつぶさず、原因を目に見える形にする。
+  void _showPlayError(String file, Object error) {
+    debugPrint('再生に失敗: $file / $error');
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFFC9A0FF),
+        title: const Text(
+          '再生できませんでした',
+          style: TextStyle(color: Colors.black87, fontSize: 18),
+        ),
+        content: Text(
+          '$file\n$error',
+          style: const TextStyle(color: Colors.black87, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('閉じる', style: TextStyle(color: Colors.black87)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // アラームのサウンド再生（wakeup_*.wav のウェイクアップタイム用）。
+  // ファイル名は選択キーから1か所で組み立てる。
+  Future<void> _playSelectedSound({bool reportError = false}) async {
+    if (_selectedSound == 'system') {
       SystemSound.play(SystemSoundType.alert);
+      return;
+    }
+    final file = 'wakeup_$_selectedSound.wav';
+    try {
+      await _audioPlayer.stop();
+      await _audioPlayer.play(AssetSource(file));
+    } catch (e) {
+      if (reportError) {
+        _showPlayError(file, e);
+      } else {
+        SystemSound.play(SystemSoundType.alert);
+      }
     }
   }
 
-  // ポモドーロ終了音（『キュアット解決！』の curette_*.wav セットから選ぶ）
-  Future<void> _playPomoSound() async {
+  // ポモドーロ終了音（『キュアット解決！』の curette_*.wav セット、またはシステム音から選ぶ）
+  Future<void> _playPomoSound({bool reportError = false}) async {
+    // 「システム」はピンポーン（system_chime.wav）
+    final file = _pomoSound == 'system'
+        ? 'system_chime.wav'
+        : 'curette_$_pomoSound.wav';
     try {
-      await _audioPlayer.play(AssetSource('curette_$_pomoSound.wav'));
-    } catch (_) {
-      SystemSound.play(SystemSoundType.alert);
+      await _audioPlayer.stop();
+      await _audioPlayer.play(AssetSource(file));
+    } catch (e) {
+      if (reportError) {
+        _showPlayError(file, e);
+      } else {
+        SystemSound.play(SystemSoundType.alert);
+      }
     }
   }
 
@@ -691,6 +723,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           },
                           items: const [
                             DropdownMenuItem(
+                              value: 'system',
+                              child: Text('システム'),
+                            ),
+                            DropdownMenuItem(
                               value: 'answer',
                               child: Text('アンサー'),
                             ),
@@ -714,7 +750,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ],
                         ),
                         TextButton(
-                          onPressed: _playPomoSound,
+                          onPressed: () => _playPomoSound(reportError: true),
                           child: const Text(
                             '試す',
                             style: TextStyle(
@@ -844,7 +880,8 @@ class _DashboardPageState extends State<DashboardPage> {
                           ],
                         ),
                         TextButton(
-                          onPressed: _playSelectedSound,
+                          onPressed: () =>
+                              _playSelectedSound(reportError: true),
                           child: const Text(
                             '試す',
                             style: TextStyle(
