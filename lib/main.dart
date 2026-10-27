@@ -85,6 +85,7 @@ class _DashboardPageState extends State<DashboardPage> {
   int _pomoTotalSeconds = 25 * 60;
   int _pomoRemainingSeconds = 25 * 60;
   int _pomoCompletedFocus = 0;
+  String _pomoSound = 'all'; // ポモドーロ終了音（curette_*.wav から選ぶ）
 
   bool get _pomoIsLongBreak =>
       _pomoIsBreak &&
@@ -244,6 +245,7 @@ class _DashboardPageState extends State<DashboardPage> {
           _alarmTime = TimeOfDay(hour: ah, minute: am);
         }
 
+        _pomoSound = prefs.getString('pomo_sound') ?? _pomoSound;
         _pomoFocusMinutes = prefs.getInt('pomo_focus') ?? _pomoFocusMinutes;
         _pomoBreakMinutes = prefs.getInt('pomo_break') ?? _pomoBreakMinutes;
         _pomoLongBreakMinutes =
@@ -336,6 +338,7 @@ class _DashboardPageState extends State<DashboardPage> {
         await prefs.remove('alarm_hour');
         await prefs.remove('alarm_minute');
       }
+      await prefs.setString('pomo_sound', _pomoSound);
       await prefs.setInt('pomo_focus', _pomoFocusMinutes);
       await prefs.setInt('pomo_break', _pomoBreakMinutes);
       await prefs.setInt('pomo_long_break', _pomoLongBreakMinutes);
@@ -384,7 +387,7 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  // アラーム／ポモドーロ共通のサウンド再生
+  // アラームのサウンド再生（旧ファイルのウェイクアップタイム用）
   Future<void> _playSelectedSound() async {
     try {
       switch (_selectedSound) {
@@ -392,17 +395,26 @@ class _DashboardPageState extends State<DashboardPage> {
           SystemSound.play(SystemSoundType.alert);
           break;
         case 'miracle':
-          await _audioPlayer.play(AssetSource('miracle.wav'));
+          await _audioPlayer.play(AssetSource('wakeup_miracle.wav'));
           break;
         case 'eclair':
-          await _audioPlayer.play(AssetSource('eclair.wav'));
+          await _audioPlayer.play(AssetSource('wakeup_eclair.wav'));
           break;
         case 'alcana':
-          await _audioPlayer.play(AssetSource('alcana.wav'));
+          await _audioPlayer.play(AssetSource('wakeup_alcana.wav'));
           break;
         case 'all':
-          await _audioPlayer.play(AssetSource('all.wav'));
+          await _audioPlayer.play(AssetSource('wakeup_all.wav'));
       }
+    } catch (_) {
+      SystemSound.play(SystemSoundType.alert);
+    }
+  }
+
+  // ポモドーロ終了音（『キュアット解決！』の curette_*.wav セットから選ぶ）
+  Future<void> _playPomoSound() async {
+    try {
+      await _audioPlayer.play(AssetSource('curette_$_pomoSound.wav'));
     } catch (_) {
       SystemSound.play(SystemSoundType.alert);
     }
@@ -558,7 +570,7 @@ class _DashboardPageState extends State<DashboardPage> {
   // フェーズ終了時：音を鳴らして次のフェーズへ
   // 集中→休憩は自動スタート、休憩→集中はタップ待ちにする（夜通し回り続けないため）
   void _onPomoPhaseFinished() {
-    _playSelectedSound();
+    _playPomoSound();
     setState(() {
       if (!_pomoIsBreak) {
         _pomoCompletedFocus++;
@@ -648,6 +660,71 @@ class _DashboardPageState extends State<DashboardPage> {
                       20,
                       30,
                     ], (v) => _pomoLongBreakMinutes = v),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          '終了音',
+                          style: TextStyle(color: Colors.black87, fontSize: 14),
+                        ),
+                        const SizedBox(width: 8),
+                        DropdownButton<String>(
+                          value: _pomoSound,
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          ),
+                          dropdownColor: Colors.white,
+                          iconEnabledColor: Colors.black54,
+                          underline: Container(
+                            height: 1,
+                            color: Colors.black38,
+                          ),
+                          onChanged: (v) {
+                            if (v == null) return;
+                            setState(() {
+                              _pomoSound = v;
+                            });
+                            _saveSettings();
+                            setDialogState(() {});
+                          },
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'answer',
+                              child: Text('アンサー'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'mystic',
+                              child: Text('ミスティック'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'miracle',
+                              child: Text('アンサー/ミスティック'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'eclair',
+                              child: Text('エクレール'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'alcana',
+                              child: Text('アルカナ'),
+                            ),
+                            DropdownMenuItem(value: 'all', child: Text('全員')),
+                          ],
+                        ),
+                        TextButton(
+                          onPressed: _playPomoSound,
+                          child: const Text(
+                            '試す',
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       '長い休憩は集中$_pomoLongBreakEvery回ごと',
@@ -765,6 +842,16 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             DropdownMenuItem(value: 'all', child: Text('全員')),
                           ],
+                        ),
+                        TextButton(
+                          onPressed: _playSelectedSound,
+                          child: const Text(
+                            '試す',
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
                       ],
                     ),
