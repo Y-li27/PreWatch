@@ -1,7 +1,7 @@
 name: prewatch
 description: Simple 2x2 dashboard for Echo Show 5
 publish_to: 'none'
-version: 4.1.0+9
+version: 4.1.1+10
 
 environment:
   sdk: '>=3.5.0 <4.0.0'

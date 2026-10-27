@@ -40,10 +40,7 @@ class EchoClockApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [_locale],
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
+      theme: ThemeData(brightness: Brightness.dark, useMaterial3: true),
       home: const DashboardPage(),
     );
   }
@@ -100,10 +97,9 @@ class _DashboardPageState extends State<DashboardPage> {
     return '$m:$s';
   }
 
-  double get _pomoProgress =>
-      _pomoTotalSeconds == 0
-          ? 0
-          : 1 - _pomoRemainingSeconds / _pomoTotalSeconds;
+  double get _pomoProgress => _pomoTotalSeconds == 0
+      ? 0
+      : 1 - _pomoRemainingSeconds / _pomoTotalSeconds;
 
   // アラーム
   TimeOfDay? _alarmTime;
@@ -139,11 +135,10 @@ class _DashboardPageState extends State<DashboardPage> {
       await _notifications.initialize(
         const InitializationSettings(android: androidInit),
       );
-      final android =
-          _notifications
-              .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
+      final android = _notifications
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       await android?.requestNotificationsPermission();
       await android?.requestExactAlarmsPermission();
     } catch (_) {
@@ -215,7 +210,10 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     _startClock();
     _boot();
-    _weatherTimer = Timer.periodic(const Duration(minutes: 30), (_) => _fetchWeather());
+    _weatherTimer = Timer.periodic(
+      const Duration(minutes: 30),
+      (_) => _fetchWeather(),
+    );
   }
 
   // 通知の初期化が終わってから設定を読む（通知の予約状態を確認するため）
@@ -274,10 +272,9 @@ class _DashboardPageState extends State<DashboardPage> {
               if (!_pomoIsBreak) {
                 _pomoCompletedFocus++;
                 _pomoIsBreak = true;
-                final minutes =
-                    _pomoCompletedFocus % _pomoLongBreakEvery == 0
-                        ? _pomoLongBreakMinutes
-                        : _pomoBreakMinutes;
+                final minutes = _pomoCompletedFocus % _pomoLongBreakEvery == 0
+                    ? _pomoLongBreakMinutes
+                    : _pomoBreakMinutes;
                 _pomoTotalSeconds = minutes * 60;
               } else {
                 _pomoIsBreak = false;
@@ -422,7 +419,10 @@ class _DashboardPageState extends State<DashboardPage> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFFC9A0FF),
-        title: const Text('アラーム', style: TextStyle(color: Colors.black87, fontSize: 20)),
+        title: const Text(
+          'アラーム',
+          style: TextStyle(color: Colors.black87, fontSize: 20),
+        ),
         content: Text(
           _alarmMessage,
           style: const TextStyle(color: Colors.black87, fontSize: 20),
@@ -439,7 +439,10 @@ class _DashboardPageState extends State<DashboardPage> {
               });
               _saveSettings();
             },
-            child: const Text('閉じる', style: TextStyle(color: Colors.black87, fontSize: 20)),
+            child: const Text(
+              '閉じる',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
           ),
         ],
       ),
@@ -467,8 +470,10 @@ class _DashboardPageState extends State<DashboardPage> {
         final tomorrowCode = daily['weather_code'][1] as int;
         final tomorrowMax = daily['temperature_2m_max'][1];
 
-        String fmtTemp(dynamic v) => v == null ? '--' : '${(v as num).round()}℃';
-        String fmtProb(dynamic v) => v == null ? '--' : '${(v as num).round()}%';
+        String fmtTemp(dynamic v) =>
+            v == null ? '--' : '${(v as num).round()}℃';
+        String fmtProb(dynamic v) =>
+            v == null ? '--' : '${(v as num).round()}%';
         final probs = daily['precipitation_probability_max'] as List?;
 
         setState(() {
@@ -477,13 +482,16 @@ class _DashboardPageState extends State<DashboardPage> {
           _weatherIcon = _weatherCodeToIcon(code);
           _tempMax = fmtTemp(daily['temperature_2m_max'][0]);
           _tempMin = fmtTemp(daily['temperature_2m_min'][0]);
-          _precipProb = fmtProb(probs != null && probs.isNotEmpty ? probs[0] : null);
+          _precipProb = fmtProb(
+            probs != null && probs.isNotEmpty ? probs[0] : null,
+          );
           _tomorrowTemp = '${tomorrowMax.round()}℃';
           _tomorrowTempMin = fmtTemp(daily['temperature_2m_min'][1]);
           _tomorrowText = _weatherCodeToText(tomorrowCode);
           _tomorrowIcon = _weatherCodeToIcon(tomorrowCode);
-          _tomorrowPrecipProb =
-              fmtProb(probs != null && probs.length > 1 ? probs[1] : null);
+          _tomorrowPrecipProb = fmtProb(
+            probs != null && probs.length > 1 ? probs[1] : null,
+          );
         });
       }
     } catch (e) {
@@ -555,10 +563,9 @@ class _DashboardPageState extends State<DashboardPage> {
       if (!_pomoIsBreak) {
         _pomoCompletedFocus++;
         _pomoIsBreak = true;
-        final minutes =
-            _pomoCompletedFocus % _pomoLongBreakEvery == 0
-                ? _pomoLongBreakMinutes
-                : _pomoBreakMinutes;
+        final minutes = _pomoCompletedFocus % _pomoLongBreakEvery == 0
+            ? _pomoLongBreakMinutes
+            : _pomoBreakMinutes;
         _pomoTotalSeconds = minutes * 60;
         _pomoRemainingSeconds = _pomoTotalSeconds;
         _pomoRunning = true;
@@ -605,15 +612,11 @@ class _DashboardPageState extends State<DashboardPage> {
                       _resetPomo();
                       setDialogState(() {});
                     },
-                    items:
-                        options
-                            .map(
-                              (m) => DropdownMenuItem(
-                                value: m,
-                                child: Text('$m分'),
-                              ),
-                            )
-                            .toList(),
+                    items: options
+                        .map(
+                          (m) => DropdownMenuItem(value: m, child: Text('$m分')),
+                        )
+                        .toList(),
                   ),
                 ],
               );
@@ -699,7 +702,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   children: [
                     Text(
                       _alarmTime?.format(context) ?? '未設定',
-                      style: const TextStyle(fontSize: 24, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Row(
@@ -718,7 +724,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           dropdownColor: Colors.white,
                           iconEnabledColor: Colors.black54,
-                          underline: Container(height: 1, color: Colors.black38),
+                          underline: Container(
+                            height: 1,
+                            color: Colors.black38,
+                          ),
                           onChanged: (value) {
                             setState(() {
                               _selectedSound = value!;
@@ -728,10 +737,22 @@ class _DashboardPageState extends State<DashboardPage> {
                             setDialogState(() {});
                           },
                           items: const [
-                            DropdownMenuItem(value: 'system', child: Text('システム')),
-                            DropdownMenuItem(value: 'miracle', child: Text('アンサー/ミスティック')),
-                            DropdownMenuItem(value: 'eclair', child: Text('エクレール')),
-                            DropdownMenuItem(value: 'alcana', child: Text('アルカナ')),
+                            DropdownMenuItem(
+                              value: 'system',
+                              child: Text('システム'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'miracle',
+                              child: Text('アンサー/ミスティック'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'eclair',
+                              child: Text('エクレール'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'alcana',
+                              child: Text('アルカナ'),
+                            ),
                             DropdownMenuItem(value: 'all', child: Text('全員')),
                           ],
                         ),
@@ -760,7 +781,10 @@ class _DashboardPageState extends State<DashboardPage> {
                             if (context.mounted) Navigator.pop(context);
                           }
                         },
-                        child: const Text('時間を選択', style: TextStyle(fontSize: 15)),
+                        child: const Text(
+                          '時間を選択',
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     ),
                     if (_alarmTime != null)
@@ -803,7 +827,10 @@ class _DashboardPageState extends State<DashboardPage> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: const Color(0xFFA0E8FF),
-          title: const Text('地域を選択', style: TextStyle(color: Colors.black87, fontSize: 18)),
+          title: const Text(
+            '地域を選択',
+            style: TextStyle(color: Colors.black87, fontSize: 18),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -853,28 +880,25 @@ class _DashboardPageState extends State<DashboardPage> {
       fontWeight: FontWeight.w500,
       color: Colors.black87,
     );
-    const subTextStyle = TextStyle(
-      fontSize: 18,
-      color: Colors.black54,
-    );
-    const smallTextStyle = TextStyle(
-      fontSize: 16,
-      color: Colors.black45,
-    );
+    const subTextStyle = TextStyle(fontSize: 18, color: Colors.black54);
+    const smallTextStyle = TextStyle(fontSize: 16, color: Colors.black45);
 
     // ポモドーロの色：集中中はキャラカラーの黄色 #F9E778、通常時は #5C526A
     // 通常時（待機・一時停止・休憩）は暗い背景になるので文字は白系にする
     final bool pomoFocusActive = !_pomoIsBreak && _pomoRunning;
-    final Color pomoPanelColor =
-        pomoFocusActive ? const Color(0xFFF9E778) : const Color(0xFF5C526A);
-    final Color pomoTextColor =
-        pomoFocusActive ? Colors.black87 : Colors.white;
-    final Color pomoSubTextColor =
-        pomoFocusActive ? Colors.black54 : Colors.white70;
-    final Color pomoProgressColor =
-        pomoFocusActive ? Colors.black54 : Colors.white;
-    final Color pomoProgressBgColor =
-        pomoFocusActive ? Colors.black12 : Colors.white24;
+    final Color pomoPanelColor = pomoFocusActive
+        ? const Color(0xFFF9E778)
+        : const Color(0xFF5C526A);
+    final Color pomoTextColor = pomoFocusActive ? Colors.black87 : Colors.white;
+    final Color pomoSubTextColor = pomoFocusActive
+        ? Colors.black54
+        : Colors.white70;
+    final Color pomoProgressColor = pomoFocusActive
+        ? Colors.black54
+        : Colors.white;
+    final Color pomoProgressBgColor = pomoFocusActive
+        ? Colors.black12
+        : Colors.white24;
 
     // 夜間（23時〜6時）は自動で減光する
     final bool isNight = _now.hour >= 23 || _now.hour < 6;
@@ -891,6 +915,10 @@ class _DashboardPageState extends State<DashboardPage> {
         burnInOffsets[(_now.hour * 60 + _now.minute) % burnInOffsets.length];
 
     return Scaffold(
+      // キーボード表示時にダッシュボードを押し潰さない（潰れると各パネルが
+      // overflow エラーを出し続け、固まったように見えるため）。
+      // キーボードは画面の上に重なって出るようになる。
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
       body: Stack(
         children: [
@@ -900,207 +928,238 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
-            children: [
-              Expanded(
-                child: Row(
                   children: [
-                    // 時計
                     Expanded(
-                      child: GestureDetector(
-                        onTap: _openAlarmSettings,
-                        child: _buildPanel(
-                          color: const Color(0xFFC9A0FF),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  timeStr,
-                                  style: const TextStyle(
-                                    fontSize: 48,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black87,
-                                    letterSpacing: 1.5,
+                      child: Row(
+                        children: [
+                          // 時計
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _openAlarmSettings,
+                              child: _buildPanel(
+                                color: const Color(0xFFC9A0FF),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        timeStr,
+                                        style: const TextStyle(
+                                          fontSize: 48,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black87,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                      if (_alarmTime != null)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 6,
+                                          ),
+                                          child: Text(
+                                            '⏰ ${_alarmTime!.format(context)}',
+                                            style: smallTextStyle,
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ),
-                                if (_alarmTime != null)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 6),
-                                    child: Text(
-                                      '⏰ ${_alarmTime!.format(context)}',
-                                      style: smallTextStyle,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // 日付
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    backgroundColor: const Color(0xFFFF9A9A),
+                                    title: const Text(
+                                      '今年の残り',
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      'あと ${_daysLeftInYear()} 日',
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.black87,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // 日付
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              backgroundColor: const Color(0xFFFF9A9A),
-                              title: const Text('今年の残り', style: TextStyle(color: Colors.black87, fontSize: 18)),
-                              content: Text(
-                                'あと ${_daysLeftInYear()} 日',
-                                style: const TextStyle(fontSize: 22, color: Colors.black87),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          );
-                        },
-                        onLongPress: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              backgroundColor: const Color(0xFFFF9A9A),
-                              title: const Text('今週の残り', style: TextStyle(color: Colors.black87, fontSize: 18)),
-                              content: Text(
-                                'あと ${_daysLeftInWeek()} 日',
-                                style: const TextStyle(fontSize: 22, color: Colors.black87),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          );
-                        },
-                        child: _buildPanel(
-                          color: const Color(0xFFFF9A9A),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(dateStr, style: mainTextStyle),
-                              const SizedBox(height: 6),
-                              Text(weekdayStr, style: subTextStyle),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Row(
-                  children: [
-                    // 天気
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _showTomorrow = !_showTomorrow;
-                          });
-                        },
-                        onLongPress: _openRegionSettings,
-                        child: _buildPanel(
-                          color: const Color(0xFFA0E8FF),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (!_showTomorrow) ...[
-                                Text(_weatherIcon, style: const TextStyle(fontSize: 28)),
-                                const SizedBox(height: 2),
-                                Text(_temp, style: mainTextStyle),
-                                Text(_weatherText, style: subTextStyle),
-                                Text(
-                                  '最高$_tempMax 最低$_tempMin ・ ☂️$_precipProb',
-                                  style: smallTextStyle,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(_cityName, style: smallTextStyle),
-                              ] else ...[
-                                Text(_tomorrowIcon, style: const TextStyle(fontSize: 28)),
-                                const SizedBox(height: 2),
-                                Text(_tomorrowTemp, style: mainTextStyle),
-                                Text('明日・$_tomorrowText', style: subTextStyle),
-                                Text(
-                                  '最低$_tomorrowTempMin ・ ☂️$_tomorrowPrecipProb',
-                                  style: smallTextStyle,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(_cityName, style: smallTextStyle),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // ポモドーロ
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: _togglePomo,
-                        onLongPress: _openPomoSettings,
-                        child: _buildPanel(
-                          // 集中中=黄色 #F9E778／通常時= #5C526A
-                          color: pomoPanelColor,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                _pomoIsBreak
-                                    ? (_pomoIsLongBreak ? '☕ 長い休憩' : '☕ 休憩')
-                                    : '集中',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: pomoSubTextColor,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                _pomoTimeText,
-                                style: TextStyle(
-                                  fontSize: 44,
-                                  fontWeight: FontWeight.w400,
-                                  color: pomoTextColor,
-                                  letterSpacing: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 28,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(3),
-                                  child: LinearProgressIndicator(
-                                    value: _pomoProgress,
-                                    minHeight: 6,
-                                    backgroundColor: pomoProgressBgColor,
-                                    color: pomoProgressColor,
+                                );
+                              },
+                              onLongPress: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    backgroundColor: const Color(0xFFFF9A9A),
+                                    title: const Text(
+                                      '今週の残り',
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      'あと ${_daysLeftInWeek()} 日',
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.black87,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
+                                );
+                              },
+                              child: _buildPanel(
+                                color: const Color(0xFFFF9A9A),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(dateStr, style: mainTextStyle),
+                                    const SizedBox(height: 6),
+                                    Text(weekdayStr, style: subTextStyle),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 6),
-                              Text(
-                                _pomoRunning ? 'タップで一時停止' : 'タップでスタート',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: pomoSubTextColor,
-                                ),
-                              ),
-                              Text(
-                                '完了 $_pomoCompletedFocus セット ・ 長押しで設定',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: pomoSubTextColor,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          // 天気
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _showTomorrow = !_showTomorrow;
+                                });
+                              },
+                              onLongPress: _openRegionSettings,
+                              child: _buildPanel(
+                                color: const Color(0xFFA0E8FF),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (!_showTomorrow) ...[
+                                      Text(
+                                        _weatherIcon,
+                                        style: const TextStyle(fontSize: 28),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(_temp, style: mainTextStyle),
+                                      Text(_weatherText, style: subTextStyle),
+                                      Text(
+                                        '最高$_tempMax 最低$_tempMin ・ ☂️$_precipProb',
+                                        style: smallTextStyle,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(_cityName, style: smallTextStyle),
+                                    ] else ...[
+                                      Text(
+                                        _tomorrowIcon,
+                                        style: const TextStyle(fontSize: 28),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(_tomorrowTemp, style: mainTextStyle),
+                                      Text(
+                                        '明日・$_tomorrowText',
+                                        style: subTextStyle,
+                                      ),
+                                      Text(
+                                        '最低$_tomorrowTempMin ・ ☂️$_tomorrowPrecipProb',
+                                        style: smallTextStyle,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(_cityName, style: smallTextStyle),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // ポモドーロ
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: _togglePomo,
+                              onLongPress: _openPomoSettings,
+                              child: _buildPanel(
+                                // 集中中=黄色 #F9E778／通常時= #5C526A
+                                color: pomoPanelColor,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _pomoIsBreak
+                                          ? (_pomoIsLongBreak
+                                                ? '☕ 長い休憩'
+                                                : '☕ 休憩')
+                                          : '集中',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: pomoSubTextColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      _pomoTimeText,
+                                      style: TextStyle(
+                                        fontSize: 44,
+                                        fontWeight: FontWeight.w400,
+                                        color: pomoTextColor,
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 28,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(3),
+                                        child: LinearProgressIndicator(
+                                          value: _pomoProgress,
+                                          minHeight: 6,
+                                          backgroundColor: pomoProgressBgColor,
+                                          color: pomoProgressColor,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      _pomoRunning ? 'タップで一時停止' : 'タップでスタート',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: pomoSubTextColor,
+                                      ),
+                                    ),
+                                    Text(
+                                      '完了 $_pomoCompletedFocus セット ・ 長押しで設定',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: pomoSubTextColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              ),
-              ],
                 ),
               ),
             ),
@@ -1108,9 +1167,7 @@ class _DashboardPageState extends State<DashboardPage> {
           if (isNight)
             Positioned.fill(
               child: IgnorePointer(
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.45),
-                ),
+                child: Container(color: Colors.black.withValues(alpha: 0.45)),
               ),
             ),
         ],
