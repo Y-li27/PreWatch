@@ -684,6 +684,16 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  // 時刻指定はアナログ時計（ダイヤル）方式に固定する。
+  // キーボード入力はこの環境では表示崩れや無応答の原因になるため使わない。
+  Future<TimeOfDay?> _inputAlarmTime() {
+    return showTimePicker(
+      context: context,
+      initialTime: _alarmTime ?? TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.dialOnly,
+    );
+  }
+
   void _openAlarmSettings() {
     showDialog(
       context: context,
@@ -767,10 +777,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           foregroundColor: Colors.black87,
                         ),
                         onPressed: () async {
-                          final picked = await showTimePicker(
-                            context: context,
-                            initialTime: _alarmTime ?? TimeOfDay.now(),
-                          );
+                          final picked = await _inputAlarmTime();
                           if (picked != null) {
                             setState(() {
                               _alarmTime = picked;
