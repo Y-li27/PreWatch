@@ -377,9 +377,9 @@ class _DashboardPageState extends State<DashboardPage> {
       }
 
       if (_alarmTime != null && !_alarmTriggered) {
-        if (now.hour == _alarmTime!.hour &&
-            now.minute == _alarmTime!.minute &&
-            now.second == 0) {
+        // 設定した分の間なら何秒でも鳴らす（0秒ちょうどのチェックだと、
+        // タイマーのずれや設定がその分に入ってから完了した場合に逃すため）
+        if (now.hour == _alarmTime!.hour && now.minute == _alarmTime!.minute) {
           _alarmTriggered = true;
           _triggerAlarm();
         }
@@ -417,11 +417,10 @@ class _DashboardPageState extends State<DashboardPage> {
   // アラームのサウンド再生（wakeup_*.wav のウェイクアップタイム用）。
   // ファイル名は選択キーから1か所で組み立てる。
   Future<void> _playSelectedSound({bool reportError = false}) async {
-    if (_selectedSound == 'system') {
-      SystemSound.play(SystemSoundType.alert);
-      return;
-    }
-    final file = 'wakeup_$_selectedSound.wav';
+    // 「システム」はピンポーン（system_chime.wav）
+    final file = _selectedSound == 'system'
+        ? 'system_chime.wav'
+        : 'wakeup_$_selectedSound.wav';
     try {
       await _audioPlayer.stop();
       await _audioPlayer.play(AssetSource(file));
@@ -1033,17 +1032,24 @@ class _DashboardPageState extends State<DashboardPage> {
 
     // 夜間（23時〜6時）は自動で減光する
     final bool isNight = _now.hour >= 23 || _now.hour < 6;
-    // 焼け対策：表示全体を1分ごとに数pxだけずらす（有機EL端末向け）
+    // 焼け対策：表示全体を20秒ごとに最大±10pxずらす（残像・焼きつき対策）
     const burnInOffsets = [
       Offset(0, 0),
-      Offset(3, 1),
-      Offset(-2, 3),
-      Offset(1, -3),
-      Offset(-3, -2),
-      Offset(2, -1),
+      Offset(6, 2),
+      Offset(-8, 5),
+      Offset(3, -7),
+      Offset(-4, -9),
+      Offset(10, -3),
+      Offset(-10, -6),
+      Offset(8, 9),
+      Offset(-6, 10),
+      Offset(1, -10),
+      Offset(-1, 7),
+      Offset(9, -9),
     ];
+    final int burnInStep = (_now.minute * 60 + _now.second) ~/ 20;
     final Offset burnInOffset =
-        burnInOffsets[(_now.hour * 60 + _now.minute) % burnInOffsets.length];
+        burnInOffsets[burnInStep % burnInOffsets.length];
 
     return Scaffold(
       // キーボード表示時にダッシュボードを押し潰さない（潰れると各パネルが
