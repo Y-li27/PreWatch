@@ -453,8 +453,14 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _triggerAlarm() async {
-    // アプリが開いているときはアプリ側が鳴らすので、システム通知は取り消す
-    await _notifications.cancel(_alarmNotificationId);
+    // アプリが開いているときはアプリ側が鳴らすので、システム通知は取り消す。
+    // ただし通知まわりが端末側で失敗しても、アラーム自体は必ず鳴らす
+    // （ここで例外が漏れると、音もダイアログも出ないまま終わってしまうため）
+    try {
+      await _notifications.cancel(_alarmNotificationId);
+    } catch (e) {
+      debugPrint('通知の取り消しに失敗（アラームは続行）: $e');
+    }
     await _playSelectedSound();
 
     if (!mounted) return;
