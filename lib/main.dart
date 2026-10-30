@@ -106,6 +106,7 @@ class _DashboardPageState extends State<DashboardPage> {
   TimeOfDay? _alarmTime;
   bool _alarmTriggered = false;
   String _selectedSound = 'system'; // 新しい変数
+  double _uiScale = 1.0; // 画面サイズに応じた中身の拡大率（build で更新）
   final AudioPlayer _audioPlayer = AudioPlayer();
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
@@ -1005,13 +1006,28 @@ class _DashboardPageState extends State<DashboardPage> {
     final dateStr = DateFormat('yyyy年M月d日', 'ja_JP').format(_now);
     final weekdayStr = DateFormat('EEEE', 'ja_JP').format(_now);
 
-    const mainTextStyle = TextStyle(
-      fontSize: 32,
+    // 大きな画面では中身も自動で拡大する。基準は Echo Show 想定の画面
+    // （高さ480・幅620）で、拡大率は両方の比率の小さい方に合わせる
+    final Size screenSize = MediaQuery.sizeOf(context);
+    double uiScale = screenSize.height / 480;
+    final double widthScale = screenSize.width / 620;
+    if (widthScale < uiScale) uiScale = widthScale;
+    uiScale = uiScale.clamp(1.0, 2.6).toDouble();
+    _uiScale = uiScale;
+
+    final mainTextStyle = TextStyle(
+      fontSize: 32 * uiScale,
       fontWeight: FontWeight.w500,
       color: Colors.black87,
     );
-    const subTextStyle = TextStyle(fontSize: 18, color: Colors.black54);
-    const smallTextStyle = TextStyle(fontSize: 16, color: Colors.black45);
+    final subTextStyle = TextStyle(
+      fontSize: 18 * uiScale,
+      color: Colors.black54,
+    );
+    final smallTextStyle = TextStyle(
+      fontSize: 16 * uiScale,
+      color: Colors.black45,
+    );
 
     // ポモドーロの色：集中中はキャラカラーの黄色 #F9E778、通常時は #5C526A
     // 通常時（待機・一時停止・休憩）は暗い背景になるので文字は白系にする
@@ -1063,7 +1079,7 @@ class _DashboardPageState extends State<DashboardPage> {
             child: Transform.translate(
               offset: burnInOffset,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0 * uiScale),
                 child: Column(
                   children: [
                     Expanded(
@@ -1081,8 +1097,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                     children: [
                                       Text(
                                         timeStr,
-                                        style: const TextStyle(
-                                          fontSize: 48,
+                                        style: TextStyle(
+                                          fontSize: 48 * uiScale,
                                           fontWeight: FontWeight.w400,
                                           color: Colors.black87,
                                           letterSpacing: 1.5,
@@ -1191,7 +1207,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     if (!_showTomorrow) ...[
                                       Text(
                                         _weatherIcon,
-                                        style: const TextStyle(fontSize: 28),
+                                        style: TextStyle(
+                                          fontSize: 28 * uiScale,
+                                        ),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(_temp, style: mainTextStyle),
@@ -1205,7 +1223,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     ] else ...[
                                       Text(
                                         _tomorrowIcon,
-                                        style: const TextStyle(fontSize: 28),
+                                        style: TextStyle(
+                                          fontSize: 28 * uiScale,
+                                        ),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(_tomorrowTemp, style: mainTextStyle),
@@ -1244,7 +1264,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                 : '☕ 休憩')
                                           : '集中',
                                       style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 18 * uiScale,
                                         color: pomoSubTextColor,
                                       ),
                                     ),
@@ -1252,7 +1272,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     Text(
                                       _pomoTimeText,
                                       style: TextStyle(
-                                        fontSize: 44,
+                                        fontSize: 44 * uiScale,
                                         fontWeight: FontWeight.w400,
                                         color: pomoTextColor,
                                         letterSpacing: 1.5,
@@ -1267,7 +1287,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         borderRadius: BorderRadius.circular(3),
                                         child: LinearProgressIndicator(
                                           value: _pomoProgress,
-                                          minHeight: 6,
+                                          minHeight: 6 * uiScale,
                                           backgroundColor: pomoProgressBgColor,
                                           color: pomoProgressColor,
                                         ),
@@ -1277,14 +1297,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                     Text(
                                       _pomoRunning ? 'タップで一時停止' : 'タップでスタート',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 16 * uiScale,
                                         color: pomoSubTextColor,
                                       ),
                                     ),
                                     Text(
                                       '完了 $_pomoCompletedFocus セット ・ 長押しで設定',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 16 * uiScale,
                                         color: pomoSubTextColor,
                                       ),
                                     ),
@@ -1316,7 +1336,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16 * _uiScale),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.25),
